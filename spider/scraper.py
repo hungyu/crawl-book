@@ -1,22 +1,33 @@
 import scrapy
+import sys
 from opencc import OpenCC
 
 
 class BrickSetSpider(scrapy.Spider):
 	name = "brickset_spider"
 	domain = "https://www.uukanshu.com"
-	book_name = '萬族之劫.txt'
+	book_name = ''
 
 	# Simplified Chinese to Traditional Chiese
 	converter = OpenCC('s2t')
 
 	# Start parsing url
-	start_urls = ['https://www.uukanshu.com/b/125477/']
+	start_urls = []
 
 	# content dict
 	articles = [];
 	stop_len = 0;
 
+	if len(sys.argv) < 6:
+		print('sys.argv length:', len(sys.argv))
+		print(sys.argv)
+		print('you need to provide valid input')
+		print('for example:')
+		print('scrapy runspider scraper.py -a starturl=https://www.uukanshu.com/b/125477/ -a output=萬族之劫.txt')
+		sys.exit(1)
+
+	start_urls.append(sys.argv[3].split('=')[1])
+	book_name = sys.argv[5].split('=')[1]
 
 	def parse(self, response):
 		# get all chapter links

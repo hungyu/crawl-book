@@ -1,6 +1,7 @@
 import scrapy
 import sys
 from opencc import OpenCC
+import w3lib.html
 
 
 class BrickSetSpider(scrapy.Spider):
@@ -9,7 +10,7 @@ class BrickSetSpider(scrapy.Spider):
 	book_name = ''
 
 	# Simplified Chinese to Traditional Chiese
-	converter = OpenCC('s2t')
+	converter = OpenCC('s2twp')
 
 	# Start parsing url
 	start_urls = []
@@ -43,15 +44,27 @@ class BrickSetSpider(scrapy.Spider):
 	def parse_content(self, response, article_index):
 		# parse title
 		title = response.css('h1::text').getall()
+
 		# parse content
-		content = response.css('#contentbox::text').getall()
-		# replace &nbsp in content
-		filter_content = [st.replace('\xa0', '') for st in content]
+		content = response.css('#contentbox').extract()
+		# remove script tag
+		content = w3lib.html.remove_tags_with_content(content[0], ('script', ))
+		# replace other tag with split keyword
+		content = w3lib.html.replace_tags(content, '<split>')
+		# replace escape char \r \t \n
+		content = w3lib.html.replace_escape_chars(content)
+		# remove all white space
+		content = content.replace(' ', '');
+		# make content line by line
+		content = content.split('<split>')
+		# filter empty string
+		content = list(filter(None, content))
+
 		# save to article dict
 		self.articles.append({
 			'idx': article_index,
 			'title': title,
-			'content': filter_content
+			'content': content
 		})
 		self.save_to_txt()
 
@@ -67,6 +80,8 @@ class BrickSetSpider(scrapy.Spider):
 		for article in sort_articles:
 			# write title
 			file.write(self.converter.convert(article['title'][0]))
+			file.write('\n')
+			file.write('\n')
 			file.write('\n')
 
 			for line in article['content']:

@@ -17,8 +17,8 @@
 
 ### usage
 ```
-	scrapy runspider scraper.py -a starturl=https://www.uukanshu.com/b/125477/ -a output=book.txt
+	pyenv exec scrapy runspider scraper.py -a starturl=https://tw.uukanshu.com/b/125477/ -a output=book.txt
 ```
 
 ### note
-* now only support www.uukanshu.com article
+* now only support tw.uukanshu.com article

@@ -6,7 +6,7 @@ import w3lib.html
 
 class BrickSetSpider(scrapy.Spider):
 	name = "brickset_spider"
-	domain = "https://www.uukanshu.com"
+	domain = "https://tw.uukanshu.com"
 	book_name = ''
 
 	# Simplified Chinese to Traditional Chiese
@@ -24,7 +24,7 @@ class BrickSetSpider(scrapy.Spider):
 		print(sys.argv)
 		print('you need to provide valid input')
 		print('for example:')
-		print('scrapy runspider scraper.py -a starturl=https://www.uukanshu.com/b/125477/ -a output=萬族之劫.txt')
+		print('scrapy runspider scraper.py -a starturl=https://tw.uukanshu.com/b/114371/ -a output=世界樹遊戲.txt')
 		sys.exit(1)
 
 	start_urls.append(sys.argv[3].split('=')[1])
@@ -79,14 +79,18 @@ class BrickSetSpider(scrapy.Spider):
 
 		for article in sort_articles:
 			# write title
-			file.write(self.converter.convert(article['title'][0]))
+			# if we need to conver simplified chinese to traditional chinese
+			# file.write(self.converter.convert(article['title'][0]))
+			file.write(article['title'][0])
 			file.write('\n')
 			file.write('\n')
 			file.write('\n')
 
 			for line in article['content']:
 				# write content
-				file.write(self.converter.convert(line.strip(' \t\n\r')))
+				# if we need to conver simplified chinese to traditional chinese
+				# file.write(self.converter.convert(line.strip(' \t\n\r')))
+				file.write(line.strip(' \t\n\r'))
 				file.write('\n')
 				file.write('\n')
 
